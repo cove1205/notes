@@ -11,7 +11,7 @@
   - [常用软件](documents/common/常用软件.md)
   - [开源许可证选择指南总结](documents/common/开源许可证选择指南总结.md)
 - flutter
-  - [Dart生成器(Generators)全面指南](<documents/flutter/Dart生成器(Generators)全面指南.md>)
+  - [Dart生成器(Generators)全面指南](documents/flutter/Dart生成器(Generators)全面指南.md)
   - [pub发布完整流程](documents/flutter/pub发布完整流程.md)
 - git
   - [Git-Commit规范](documents/git/Git-Commit规范.md)

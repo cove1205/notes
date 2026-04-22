@@ -1,0 +1,33 @@
+title: 📚 文档中心
+description: 常用工具、开发指南、iOS 相关文档
+baseurl: "/notes"
+url: "https://cove1205.github.io"
+timezone: Asia/Shanghai
+
+# Jekyll 配置
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+  syntax_highlighter_opts:
+    chunk_width: 250
+
+# 页面标题
+permalink: pretty
+
+# # Gems（GitHub Pages 支持的插件）
+# plugins:
+#   - jekyll-toc
+
+# # 自动生成目录
+# toc:
+#   max_level: 2
+#   toc_class: toc
+#   list_class: toc-list
+#   item_class: toc-item
+
+# # 忽略不参与构建的文件
+# exclude:
+#   - scripts
+#   - Gemfile
+#   - Gemfile.lock

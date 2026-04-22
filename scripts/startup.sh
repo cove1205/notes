@@ -10,6 +10,9 @@ CYAN='\033[0;36m'
 PURPLE='\033[0;35m'
 NC='\033[0m'
 
+
+####################↓↓↓↓↓↓↓↓↓↓全局函数↓↓↓↓↓↓↓↓↓↓####################
+# 检查命令是否存在
 command_exists() {
     command -v "$1" > /dev/null 2>&1
 }
@@ -65,6 +68,7 @@ detect_os() {
     esac
 }
 
+####################↓↓↓↓↓↓↓↓↓↓[标题和菜单]↓↓↓↓↓↓↓↓↓↓####################
 show_banner() {
     clear
     echo -e "${BLUE}======================================"
@@ -87,6 +91,7 @@ show_menu() {
     echo ""
 }
 
+####################↓↓↓↓↓↓↓↓↓↓[HomeBrew]↓↓↓↓↓↓↓↓↓↓####################
 # 安装Homebrew
 install_homebrew() {
     echo -e "${GREEN}正在安装 Homebrew...${NC}"
@@ -136,6 +141,7 @@ install_homebrew() {
     fi
 }
 
+####################↓↓↓↓↓↓↓↓↓↓[Nerd Fonts]↓↓↓↓↓↓↓↓↓↓####################
 # 安装Nerd Fonts
 install_nerd_font() {
     while true; do
@@ -193,6 +199,64 @@ install_nerd_font() {
     done
 }
 
+####################↓↓↓↓↓↓↓↓↓↓[Starship]↓↓↓↓↓↓↓↓↓↓####################
+# 安装Starship
+install_starship() {
+    log_info "开始安装 Starship..."
+    
+    if command_exists starship; then
+        log_warning "Starship 已安装，跳过安装"
+        return 0
+    fi
+    
+    if ! command_exists brew; then
+        log_error "Starship 强制使用 Homebrew 安装，请先安装 Homebrew"
+        log_error "请选择选项 1 安装 Homebrew 后，再来安装 Starship"
+        return 1
+    fi
+    
+    log_info "使用 Homebrew 安装 Starship..."
+    brew install starship
+    
+    if command_exists starship; then
+        
+        log_info "开始配置 Starship..."
+        
+        mkdir -p "$HOME/.config"
+         if starship preset catppuccin-powerline -o ~/.config/starship.toml 2>/dev/null; then
+            log_success "Starship 配置文件已生成"
+        else
+            log_warning "无法自动生成starship配置文件"
+        fi
+        
+        log_info "配置 Starship 初始化..."
+        if [ -f "$HOME/.zshrc" ]; then
+            if ! grep -q 'starship init zsh' "$HOME/.zshrc"; then
+                echo '' >> "$HOME/.zshrc"
+                echo '# Starship 提示符' >> "$HOME/.zshrc"
+                echo 'eval "$(starship init zsh)"' >> "$HOME/.zshrc"
+                source ~/.zshrc
+                log_success "已将 starship 初始化命令添加到 ~/.zshrc"
+            else
+                log_info "Starship 初始化命令已存在于 ~/.zshrc"
+            fi
+        else
+            echo 'eval "$(starship init zsh)"' > "$HOME/.zshrc"
+            source ~/.zshrc
+            log_success "已添加 starship 初始化命令"
+        fi
+        
+        echo ""
+        log_success "*************Starship 安装成功!***************"
+        echo ""
+        return 0
+    else
+        log_error "Starship 安装失败"
+        return 1
+    fi
+}
+
+####################↓↓↓↓↓↓↓↓↓↓[Zsh + Oh-My-Zsh]↓↓↓↓↓↓↓↓↓↓####################
 # 安装Zsh + Oh-My-Zsh
 install_zsh_setup() {
     echo -e "${GREEN}正在安装 Zsh + Oh-My-Zsh...${NC}"
@@ -235,71 +299,6 @@ install_zsh_setup() {
     echo -e "${YELLOW}请重新打开终端或执行以下命令启动zsh:${NC}"
     echo "  zsh"
     echo ""
-}
-
-# 安装Starship
-install_starship() {
-    log_info "开始安装 Starship..."
-    
-    if command_exists starship; then
-        log_warning "Starship 已安装，跳过安装"
-        return 0
-    fi
-    
-    if ! command_exists brew; then
-        log_error "Starship 强制使用 Homebrew 安装，请先安装 Homebrew"
-        log_info "请选择选项 1 安装 Homebrew 后，再来安装 Starship"
-        return 1
-    fi
-    
-    log_info "使用 Homebrew 安装 Starship..."
-    brew install starship
-    
-    if command_exists starship; then
-        log_success "Starship 安装成功"
-        
-        log_info "开始配置 Starship..."
-        
-        mkdir -p "$HOME/.config"
-         if starship preset catppuccin-powerline -o ~/.config/starship.toml 2>/dev/null; then
-            log_success "Starship 配置文件已生成"
-        else
-            log_warning "无法自动生成starship配置文件"
-        fi
-        
-        log_info "配置 Starship 初始化..."
-        if [ -f "$HOME/.zshrc" ]; then
-            if ! grep -q 'starship init zsh' "$HOME/.zshrc"; then
-                echo '' >> "$HOME/.zshrc"
-                echo '# Starship 提示符' >> "$HOME/.zshrc"
-                echo 'eval "$(starship init zsh)"' >> "$HOME/.zshrc"
-                source ~/.zshrc
-                log_success "已将 starship 初始化命令添加到 ~/.zshrc"
-            else
-                log_info "Starship 初始化命令已存在于 ~/.zshrc"
-            fi
-        else
-            echo 'eval "$(starship init zsh)"' > "$HOME/.zshrc"
-            source ~/.zshrc
-            log_success "已添加 starship 初始化命令"
-        fi
-        
-        echo ""
-        log_success "Starship 安装完成!"
-        echo ""
-        return 0
-    else
-        log_error "Starship 安装失败"
-        return 1
-    fi
-}
-
-# 安装所有工具
-install_all() {
-    install_homebrew
-    install_nerd_font
-    install_zsh_setup
-    install_starship
 }
 
 # 安装zsh（主要针对Linux系统）
@@ -558,6 +557,15 @@ configure_zshrc() {
     return 0
 }
 
+####################↓↓↓↓↓↓↓↓↓↓[安装所有]↓↓↓↓↓↓↓↓↓↓####################
+# 安装所有工具
+install_all() {
+    install_homebrew
+    install_nerd_font
+    install_zsh_setup
+    install_starship
+}
+################################################################################
 
 main() {
     while true; do
